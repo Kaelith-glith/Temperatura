@@ -1,34 +1,28 @@
-nome = input('Qual seu nome? ')
-idade = int(input('Sua idade? '))
+import requests
 
-if idade < 18:
-    print(f'Desculpe, {nome}, mas apenas maiores de idade podem acessar o sistema.')
+nome = input('Digite seu nome: ')
+idade = int(input('Digite sua idade: '))
+
+if idade <18:
+    print(f'Voce é menor de idade, {nome}.')
+
 else:
-    print(f'Bem-vindo ao sistema, {nome}!')
+    print(f'Bem-vindo(a) ao sistema, {nome}!')
 
-    # Parte com loop para temperatura
-    def escolhas():
-        while True:
-            print('\nDigite 1 para verificar temperatura ou 2 para sair.')
-            escolha = input('Escolha: ')
+def obter_temperatura(cidade):
+    chave_api = "655152422da656a68cbd7eaf5374f0bf"
+    url = f"https://api.openweathermap.org/data/2.5/weather?q={cidade}&appid={chave_api}&lang=pt_br&units=metric"
 
-            if escolha == '2':
-                print('Saindo do sistema... Até mais!')
-                break
+    resposta = requests.get(url)
+    dados = resposta.json()
 
-            elif escolha == '1':
-                temp = int(input('Qual a temperatura hoje? '))
+    if resposta.status_code == 200:
+        temperatura = dados['main']['temp']
+        descricao = dados['weather'][0]['description']
+        print(f"Temperatura atual em {cidade}: {temperatura}°C, {descricao} \n tenha um otimo dia {nome}!")
+    else:
+        print("Cidade não encontrada ou erro na API.")
 
-                if temp > 25:
-                    print(f'Hoje está quente, {nome}!')
-                elif temp < 0:
-                    print('Hoje está muito frio, véi!')
-                elif temp <= 24:
-                    print('Hoje está frio!')
-                else:
-                    print('Hoje está agradável!')
-            else:
-                print('Opção inválida. Tente novamente.')
-
-    # Só chama a função se a idade for válida
-    escolhas()
+# Exemplo de uso:
+cidade = input("Digite o nome da cidade: ")
+obter_temperatura(cidade)
