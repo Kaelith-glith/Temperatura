@@ -6,7 +6,7 @@ import os
 
 # Carregar variável de ambiente
 load_dotenv()
-chave_api = os.getenv('655152422da656a68cbd7eaf5374f0bf')  # Seu .env deve conter: API_KEY=655152422da656a68cbd7eaf5374f0bf
+chave_api = os.getenv('API_KEY')  # Seu .env deve conter: API_KEY=655152422da656a68cbd7eaf5374f0bf
 
 # Tema
 ctk.set_appearance_mode('dark')
@@ -15,14 +15,16 @@ ctk.set_default_color_theme('blue')
 # Janela de login
 app = ctk.CTk()
 app.title('Login')
-app.geometry('400x300')
-
 
 largura = 400
 altura = 300
-x = 900 - largura # canto direito
-y = 200 # topo
-app.geometry(f'{largura}x{altura}+{x}+{y}')
+largura_tela = app.winfo_screenwidth()
+altura_tela = app.winfo_screenheight()
+
+pos_x = (largura_tela - largura) //2 # canto direito)
+pos_y = (altura_tela - altura) //2
+app.geometry(f'{largura}x{altura}+{pos_x}+{pos_y}')
+app.resizable(False, False)
 
 
 # Widgets de login
@@ -37,7 +39,7 @@ entrada_nome.bind('<Return>', lambda event: entrada_idade.focus()) # foca na pro
 entrada_idade = ctk.CTkEntry(app, placeholder_text='Digite sua idade')
 entrada_idade.pack(pady=10)
 
-entrada_idade.bind('<Return>', lambda envet: verificar_login())
+entrada_idade.bind('<Return>', lambda event: verificar_login())
 
 
 def setar_foco():
@@ -52,14 +54,22 @@ def abrir_sistema(nome):
 
     sistema = ctk.CTk()
     sistema.title('Temperatura')
-    sistema.geometry('600x200')
+    largura = 400
+    altura = 150
+    largura_tela = sistema.winfo_screenwidth()
+    altura_tela = sistema.winfo_screenheight()
 
-    ctk.CTkLabel(sistema, text=f'Olá {nome}! Aqui vai o sistema de temperatura.', font=ctk.CTkFont(size=18, weight='bold')).pack(pady=10)
+    pos_x = (largura_tela - largura) //2 # canto direito
+    pos_y = (altura_tela - altura) //2
+    sistema.geometry(f'{largura}x{altura}+{pos_x}+{pos_y}')
+    sistema.resizable(False, False)
+
+    ctk.CTkLabel(sistema, text=f'Olá {nome}! Diga sua cidade.', font=ctk.CTkFont(size=18, weight='bold')).pack(pady=10)
     
     entrada_cidade = ctk.CTkEntry(sistema, placeholder_text='Digite o nome da cidade')
     entrada_cidade.pack(pady=10)
 
-    entrada_cidade.bind('<Return>', lambda envet: obter_temperatura())
+    entrada_cidade.bind('<Return>', lambda event: obter_temperatura())
 
     def setar_foco():
         sistema.focus_force()
@@ -73,10 +83,10 @@ def abrir_sistema(nome):
         cidade = entrada_cidade.get()
 
         if not cidade:
-            messagebox.showerror('Erro', 'Por favor, digite uma cidade!')
+            messagebox.showerror("Erro", "Por favor, digite uma cidade!")
             return
 
-        url = f"https://api.openweathermap.org/data/2.5/weather?q={cidade}&appid={'655152422da656a68cbd7eaf5374f0bf'}&lang=pt_br&units=metric"
+        url = f"https://api.openweathermap.org/data/2.5/weather?q={cidade}&appid={chave_api}&lang=pt_br&units=metric"
         resposta = requests.get(url)
         dados = resposta.json()
 
